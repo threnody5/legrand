@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <title>Murad Project #2</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <nav>
+            <h2>Murad Project #2</h2>
+        </nav>
+        <section id="OuterSect">
+
+                <section id="InnerSect">
+                    <p>Customer #
+                        <input type="text" name="customerId" id="custId">
+                    </p>
+    
+                    <p>First Name
+                        <input type="text" name="FirstName" id="fName">
+                    </p>
+    
+                    <p>Last Name
+                        <input type="text" name="LastName" id="lName">
+                    </p>
+                    <p>Address
+                        <input type="text" name="Address" id="address">
+                    </p>
+    
+                    <p>City
+                        <input type="text" name="City" id="city">
+                    </p>
+    
+                    <p>Province
+                        <input type="text" name="Province" id="province">
+                    </p>
+    
+                    <p>Postal
+                        <input type="text" name="Postal" id="postal"> 
+                    </p>
+                    <br>
+    
+                </section>
+                
+                <div>
+                    <button value="New" onclick="newF()">New</button>
+                    <button value="Add" onclick="add()">Add</button>
+                    <button value="Update" onclick="update()">Update</button>
+                    <button value="Delete" onclick="deleteF()">Delete</button>
+                    <button value="Find" onclick="find()">Find</button>
+                </div>
+
+        </section>
+
+        <script>
+
+            function postRequest() {
+                $.post("/api/data", {
+
+                    cusID: document.getElementById("custId").value
+                },
+                    // callback function returns status and data as object literal
+                    function (data, status) {
+                        $gel("fName").value = data.first;
+                        $gel("lName").value = data.last;
+                        $gel("address").value = data.address;
+                        $gel("city").value = data.city;
+                        $gel("province").value = data.province;
+                        $gel("postal").value = data.postal;
+                    });
+            }
+
+            let people = [];
+
+
+            function PersonDetails(custId, first, last, address, city, province, postal) {
+
+                this.custId = custId;
+                this.first = first;
+                this.last = last;
+                this.address = address;
+                this.city = city;
+                this.province = province;
+                this.postal = postal;
+            }
+
+            people.push(new PersonDetails("1", "Jack", "Henderson", "32 Diamond Street", "Toronto", "ON", "K3P 8N3"));
+            people.push(new PersonDetails("2", "Micheal", "William", "1029 Northwind Street", "Surrey", "BC", "U8Q 9H4"));
+            people.push(new PersonDetails("3", "Andrew", "Geoffrey ", "32 Sussex Street", "Calgary", "AB", "B7K 0P1"));
+
+            function $gel(id) {
+
+                return document.getElementById(id);
+            }
+
+            function newF() {
+                $gel("custId").value = "";
+                $gel("fName").value = "";
+                $gel("lName").value = "";
+                $gel("address").value = "";
+                $gel("city").value = "";
+                $gel("province").value = "";
+                $gel("postal").value = "";
+            }
+
+            function add() {
+                $.post("/api/data", {
+                    // this is the data being posted to the web server
+                    op: "Add",
+                    fName: document.getElementById("fName").value,
+                    lName: document.getElementById("lName").value,
+                    address: document.getElementById("address").value,
+                    city: document.getElementById("city").value,
+                    province: document.getElementById("province").value,
+                    postalCode: document.getElementById("postal").value
+                },
+                    // callback function returns status and data as object literal
+                    function (data, status) {
+                        document.getElementById("CusID").value = data.recordset[0].identity;
+                    });
+
+            }
+
+            function update() {
+                let idOfPerson = $gel("custId").value;
+ 
+                for (let i = 0; i < people.length; i++) {
+
+                    if (idOfPerson === people[i].custId) {
+
+                        people[i].custId = $gel("custId").value;
+                        people[i].first = $gel("fName").value;
+                        people[i].last = $gel("lName").value;
+                        people[i].address = $gel("address").value;
+                        people[i].city = $gel("city").value;
+                        people[i].province = $gel("province").value; 
+                        people[i].postal = $gel("postal").value;
+                    }
+                }
+                alert("The Details of the corresponding ID have been updated!")
+            }
+
+            function deleteF() {
+                
+                let idOfPerson = $gel("custId").value;
+ 
+                for (let i = 0; i < people.length; i++) {
+
+                    if (idOfPerson === people[i].custId) {
+
+                        people.splice(i, 1);
+
+                        $gel("custId").value = "";
+                        $gel("fName").value = "";
+                        $gel("lName").value = "";
+                        $gel("address").value = "";
+                        $gel("city").value = "";
+                        $gel("province").value = "";
+                        $gel("postal").value = "";
+
+                        alert("The details of the corresponding ID have been deleted!")
+                    }
+                }
+
+            }
+
+            function find() {
+
+                let idOfPerson = $gel("custId").value;
+
+                for (let i = 0; i < people.length; i++) {
+
+                    if (idOfPerson === people[i].custId) {
+
+                        $gel("custId").value = people[i].custId;
+                        $gel("fName").value = people[i].first;
+                        $gel("lName").value = people[i].last;
+                        $gel("address").value = people[i].address;
+                        $gel("city").value = people[i].city;
+                        $gel("province").value = people[i].province;
+                        $gel("postal").value = people[i].postal;
+                    }
+                }
+
+            }
+
+        </script>
+    </body>
+</html>
